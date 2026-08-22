@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Wave Visualizer</title>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: #000;
+  }
+  canvas {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+  }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+function resize(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.onresize = resize;
+
+let t = 0;
+let touchBoost = 0;
+
+document.addEventListener("touchstart", () => touchBoost = 25);
+document.addEventListener("touchend", () => touchBoost = 0);
+
+// MAIN ANIMATION
+function animate(){
+  ctx.fillStyle = "rgba(0,0,0,0.15)";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  let mid = canvas.height / 2;
+  let waveLength = 0.02;
+  let amplitude = 80 + touchBoost;
+  let speed = 0.05;
+
+  ctx.lineWidth = 6;
+
+  ctx.beginPath();
+  for(let x = 0; x < canvas.width; x++){
+    let y = Math.sin(x * waveLength + t) * amplitude + mid;
+    ctx.strokeStyle = `hsl(${(x/4 + t*20) % 360},100%,60%)`;
+    ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  t += speed;
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>
